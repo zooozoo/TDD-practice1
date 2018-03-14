@@ -10,6 +10,7 @@ from lists.models import Item
 
 class HomePageTest(TestCase):
     pattern_input_csrf = re.compile(r'<input[^>]*csrfmiddlewaretoken[^>]*>')
+
     def test_root_url_resolves_to_home_page_view(self):
         found = resolve('/')
         self.assertEqual(found.func, home_page)
@@ -22,6 +23,7 @@ class HomePageTest(TestCase):
             re.sub(self.pattern_input_csrf, '', response.content.decode()),
             re.sub(self.pattern_input_csrf, '', expected_html)
         )
+
     def test_home_page_can_save_a_POST_request(self):
         request = HttpRequest()
         request.method = 'POST'
@@ -29,15 +31,41 @@ class HomePageTest(TestCase):
 
         response = home_page(request)
 
-        self.assertIn('신규 작업 아이템', response.content.decode())
-        expected_html = render_to_string(
-            'home.html',
-            {'new_item_text': '신규 작업 아이템'}
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, '신규 작업 아이템')
+
+    def test_home_page_redirects_after_POST(self):
+        request = HttpRequest()
+        request.method = 'POST'
+        request.POST['item_text'] = '신규 직업 아이템'
+
+        response = home_page(request)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
+
+    def test_home_page_only_saves_items_when_necessary(self):
+        request = HttpRequest()
+        home_page(request)
+        self.assertEqual(Item.objects.count(), 0)
+
+    def test_home_page_displays_all_list_itemm(self):
+        Item.objects.create(text='itemey 1')
+        Item.objects.create(text='itemey 2')
+
+        request = HttpRequest()
+        response = home_page(request)
+
+        self.assertIn(
+            re.sub(self.pattern_input_csrf, '', 'itemey 1'),
+            re.sub(self.pattern_input_csrf, '', response.content.decode())
         )
-        self.assertEqual(
-            re.sub(self.pattern_input_csrf, '', response.content.decode()),
-            re.sub(self.pattern_input_csrf, '', expected_html)
+        self.assertIn(
+            re.sub(self.pattern_input_csrf, '', 'itemey 2'),
+            re.sub(self.pattern_input_csrf, '', response.content.decode())
         )
+
 
 class ItemModelTest(TestCase):
     def test_saving_and_retrieving_items(self):
