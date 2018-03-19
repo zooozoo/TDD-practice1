@@ -71,7 +71,9 @@ class ItemModelTest(TestCase):
 
 
 class ListViewTest(TestCase):
-    pattern_input_csrf = re.compile(r'<input[^>]*csrfmiddlewaretoken[^>]*>')
+    def test_uses_list_template(self):
+        response = self.client.get('/lists/the-only-list-in-the-world/')
+        self.assertTemplateUsed(response, 'list.html')
 
     def test_home_page_displays_all_itemms(self):
         Item.objects.create(text='itemey 1')
