@@ -76,7 +76,7 @@ class NewVisitorTest(LiveServerTestCase):
         # 프란시스가 새로운 작업 아이템을 입력하기 시작한다
         # 그는 에디스보다 재미가 없다
         inputbox = self.browser.find_element_by_id('id_new_item')
-        inputbox.send_keys('우유사기')
+        inputbox.send_keys('우유 사기')
         inputbox.send_keys(Keys.ENTER)
 
         # 프란시스가 전용 URL을 취득한다.
