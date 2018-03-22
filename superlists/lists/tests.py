@@ -1,4 +1,5 @@
 from django.http import HttpRequest
+from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.test import TestCase
 
@@ -12,7 +13,10 @@ class HomePageTest(TestCase):
         self.assertEqual(found.func, home_page)
 
     def test_home_page_returns_correct_html(self):
-        request = HttpRequest()
-        response = home_page(request)
-        expected_html = render_to_string('home.html')
-        self.assertEqual(response.content.decode(), expected_html)
+        response = self.client.get('/')
+        self.assertTemplateUsed(response, 'home.html')
+
+    def test_home_page_caan_save_a_POST_request(self):
+        response = self.client.post('/', data={'item_text': '신규 작업 아이템'})
+        self.assertIn('신규 작업 아이템', response.content.decode())
+        self.assertTemplateUsed(response, 'home.html')
