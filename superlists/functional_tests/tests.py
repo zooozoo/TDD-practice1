@@ -68,7 +68,7 @@ class NewVisitorTest(LiveServerTestCase):
         # 프란시스가 홈페이지에 접속한다
         # 에디스의 리스트는 보이지 않는다
         self.browser.get(self.live_server_url)
-        page_text = self.browser.find_elements_by_tag_name('body')
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('공작깃털 사기', page_text)
         self.assertNotIn('그물 만들기', page_text)
 
@@ -84,7 +84,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotEqual(francis_list_url, edith_list_url)
 
         # 에디스가 입력한 흔적이 없다는 것을 다시 확인한다
-        page_text = self.browser.find_elements_by_tag_name('body').text
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('공작깃털 사기', page_text)
         self.assertIn('우유 사기', page_text)
 
