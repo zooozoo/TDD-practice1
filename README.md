@@ -21,7 +21,7 @@ assert error를 뱉어낸다. 찾아보니 이전 버전 에서는 `render_to_st
 해결 할 수 있었지만 지금 내가 사용하고 있는 버전에서는 (1.11.6) 위와 같은 방법으로 해결 할 수 없었다.
 (추측으로는 request 별로 다른 csrf 토큰을 만드는 것 같다)
 [패스트캠퍼스 강사님이 알려주신 방법으로는](https://lhy.kr/tdd-with-python) 아래와 같이 csrf토큰 
-문자열을 정규표현식을 사용해 삭제하제하는 것 이다. 
+문자열을 정규표현식을 사용해 삭제하는 것 이다. 
 ```python
 class HomePageTest(TestCase):
     pattern_input_csrf = re.compile(r'<input[^>]*csrfmiddlewaretoken[^>]*>')
